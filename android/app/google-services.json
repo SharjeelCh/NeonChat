@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61864848719",
+    "project_id": "neonchat-4bf60",
+    "storage_bucket": "neonchat-4bf60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61864848719:android:791fec859d5efee5c2293a",
+        "android_client_info": {
+          "package_name": "com.neonchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkrjjHQvE0_C7rMW7v4cldSpWqL3EFfTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
