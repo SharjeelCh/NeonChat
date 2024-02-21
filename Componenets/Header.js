@@ -2,8 +2,10 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {height, width} from './dimension';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 const Header = props => {
+  const navigation=useNavigation();
   return (
     <View
       style={{
@@ -25,12 +27,14 @@ const Header = props => {
           borderRadius: 100,
           marginLeft:width/20,
 
-        }}>
+        }}
+        onPress={()=>{navigation.navigate('SearchBar')}}
+        >
         <Icon name="search" size={width / 20} color={'white'} />
       </TouchableOpacity>
-      <Text style={{fontSize:width/18,fontFamily:'Nunito-Medium',color:'white'}}>{props.title}</Text>
+      <Text style={{fontSize:width/17,fontFamily:'Nunito-Medium',color:'white'}}>{props.title}</Text>
 
-      <View
+      <TouchableOpacity
         style={{
           borderColor: 'white',
           borderWidth: 0.2,
@@ -41,7 +45,9 @@ const Header = props => {
           borderRadius: 100,
           marginRight:width/26
 
-        }}></View>
+        }}
+        onPress={()=>{navigation.navigate('Profile')}}
+        ></TouchableOpacity>
     </View>
   );
 };

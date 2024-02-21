@@ -22,7 +22,7 @@ export const Tabbar = () => {
         options={{
           tabBarIcon: ({color, size}) => (
             <Ionicons name="chatbubbles-sharp" size={size} color={color} />
-          ),
+          )
         }}
       />
       <stack.Screen

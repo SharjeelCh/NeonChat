@@ -9,6 +9,8 @@ import Home from './Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from './UserProvider';
 import { Tabbar } from '../Componenets/Tabbar';
+import { SearchBar } from './SearchBar';
+import Profile from './Profile';
 const Navigation = () => {
   const stack = createNativeStackNavigator();
 
@@ -18,12 +20,12 @@ const Navigation = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
+        const storedLoginStatus = await AsyncStorage.getItem('isloggedin');
         if (storedLoginStatus !== null) {
           const parsedLoginStatus = JSON.parse(storedLoginStatus);
           setUser({ ...user, isLoggedIn: parsedLoginStatus });
         } else {
-          // Handle the case where storedLoginStatus is undefined/null
-          setUser({ ...user, isLoggedIn: false }); // Assuming false when login status is not stored
+          setUser({ ...user, isLoggedIn: false }); 
         }
       } catch (error) {
         console.error('Error reading login status from AsyncStorage', error);
@@ -36,16 +38,22 @@ const Navigation = () => {
   return (
     <stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="Login">
+    >
       {isLoggedIn ? (
         <>
         <stack.Screen name="Tabbar" component={Tabbar} />
+        <stack.Screen name="SearchBar" component={SearchBar} />
+        <stack.Screen name="Profile" component={Profile} />
+
         </>
       ) : (
         <>
           <stack.Screen name="Login" component={Login} />
           <stack.Screen name="Signup" component={Signup} />
           <stack.Screen name="Tabbar" component={Tabbar} />
+          <stack.Screen name="SearchBar" component={SearchBar} />
+          <stack.Screen name="Profile" component={Profile} />
+
 
 
         </>

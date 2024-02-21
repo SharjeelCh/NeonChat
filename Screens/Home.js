@@ -1,4 +1,4 @@
-import {View, Text, FlatList, StatusBar} from 'react-native';
+import {View, Text, FlatList, StatusBar, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {height, width} from '../Componenets/dimension';
 import Header from '../Componenets/Header';
@@ -19,7 +19,7 @@ const Home = () => {
           data={'fdsgghjgjhghjgjgj'}
           renderItem={() => {
             return (
-              <View
+              <TouchableOpacity
                 style={{
                   flexDirection: 'row',
                   width: width,
@@ -68,7 +68,7 @@ const Home = () => {
                     </View>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           }}
         />
@@ -82,7 +82,7 @@ const Home = () => {
       <View
         style={{
           width: width,
-          height: height / 11,
+          height: height / 16,
           backgroundColor: '#07635D',
         }}></View>
       {chatlist()}
