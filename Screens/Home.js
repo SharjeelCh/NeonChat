@@ -1,9 +1,34 @@
 import {View, Text, FlatList, StatusBar, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {height, width} from '../Componenets/dimension';
 import Header from '../Componenets/Header';
-
+import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = () => {
+  const navigation = useNavigation();
+  const [users, setUsers] = useState([]);
+  const [id,setId]=useState('');
+  useEffect(()=>{
+    getUsers();
+  },[])
+
+  const getUsers = async () => {
+    const userid = await AsyncStorage.getItem('USERID');
+     setId(userid)
+     console.log(id)
+
+    let tempdata=[]
+    firestore().collection('users').where('userId', '!=', userid).
+      get().then(res => {
+        if(res.docs!=[]){
+          res.docs.map(doc => {
+            tempdata.push(doc.data());
+          });
+          setUsers(tempdata);
+        }
+      });
+  };
   const chatlist = () => {
     return (
       <View
@@ -16,10 +41,10 @@ const Home = () => {
           paddingTop: height / 28,
         }}>
         <FlatList
-          data={'fdsgghjgjhghjgjgj'}
-          renderItem={() => {
+          data={users}
+          renderItem={({item}) => {
             return (
-              <TouchableOpacity
+              <View
                 style={{
                   flexDirection: 'row',
                   width: width,
@@ -28,32 +53,51 @@ const Home = () => {
                   marginLeft: width / 20,
                   marginRight: width / 20,
                 }}>
-                <View
+                <TouchableOpacity
                   style={{
                     borderRadius: width / 3,
                     width: width / 7.5,
                     height: width / 7.5,
                     borderWidth: 0.2,
                     borderColor: 'black',
-                  }}></View>
-                <View style={{marginLeft: width / 20, marginRight: width / 20,width:width/1.4}}>
+                  }}></TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    marginLeft: width / 20,
+                    marginRight: width / 20,
+                    width: width / 1.4,
+                  }}
+                  onPress={() => {
+                    navigation.navigate('ChatScreen',{data:item,id:id} );
+                  }}>
                   <View
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       alignItems: 'center',
                     }}>
-                    <Text style={{fontFamily:'Nunito-Bold',fontSize:width/18,color:'black'}}>Sharjeel Fida</Text>
-                    <Text style={{fontFamily:'Nunito-Medium',color:'grey'}}>2 min ago</Text>
+                    <Text
+                      style={{
+                        fontFamily: 'Nunito-Bold',
+                        fontSize: width / 18,
+                        color: 'black',
+                      }}>
+                      {item.username}
+                    </Text>
+                    <Text style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
+                      2 min ago
+                    </Text>
                   </View>
                   <View
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      alignItems:'center',
-                      marginTop:height/220,
+                      alignItems: 'center',
+                      marginTop: height / 220,
                     }}>
-                    <Text style={{fontFamily:'Nunito-Medium',color:'grey'}}>hello how are you now</Text>
+                    <Text style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
+                      hello how are you now
+                    </Text>
                     <View
                       style={{
                         width: width / 18,
@@ -62,13 +106,15 @@ const Home = () => {
                         justifyContent: 'center',
                         alignItems: 'center',
                         borderRadius: width / 7,
-                        borderColor:'red'
+                        borderColor: 'red',
                       }}>
-                      <Text style={{color: 'white',fontFamily:'Nunito-Bold'}}>3</Text>
+                      <Text style={{color: 'white', fontFamily: 'Nunito-Bold'}}>
+                        3
+                      </Text>
                     </View>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
             );
           }}
         />
@@ -77,8 +123,8 @@ const Home = () => {
   };
   return (
     <View style={{flex: 1}}>
-      <StatusBar backgroundColor={'#07635D'}/>
-      <Header title='Home'/>
+      <StatusBar backgroundColor={'#07635D'} />
+      <Header title="Home" />
       <View
         style={{
           width: width,

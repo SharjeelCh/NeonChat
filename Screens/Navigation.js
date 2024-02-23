@@ -11,6 +11,7 @@ import { UserContext } from './UserProvider';
 import { Tabbar } from '../Componenets/Tabbar';
 import { SearchBar } from './SearchBar';
 import Profile from './Profile';
+import ChatScreen from './ChatScreen';
 const Navigation = () => {
   const stack = createNativeStackNavigator();
 
@@ -43,7 +44,9 @@ const Navigation = () => {
         <>
         <stack.Screen name="Tabbar" component={Tabbar} />
         <stack.Screen name="SearchBar" component={SearchBar} />
+        <stack.Screen name="ChatScreen" component={ChatScreen} />
         <stack.Screen name="Profile" component={Profile} />
+
 
         </>
       ) : (
@@ -52,6 +55,8 @@ const Navigation = () => {
           <stack.Screen name="Signup" component={Signup} />
           <stack.Screen name="Tabbar" component={Tabbar} />
           <stack.Screen name="SearchBar" component={SearchBar} />
+          <stack.Screen name="ChatScreen" component={ChatScreen} />
+
           <stack.Screen name="Profile" component={Profile} />
 
 
