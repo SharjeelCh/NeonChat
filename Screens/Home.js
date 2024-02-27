@@ -127,6 +127,7 @@ const Home = () => {
     );
   };
   const hanfleprofile = () => {
+    console.log('id home: ', id);
       navigation.navigate('Profile', {id: id});
   };
   return (

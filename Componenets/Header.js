@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 const Header = props => {
-  const navigation=useNavigation();
+  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -28,7 +28,7 @@ const Header = props => {
           marginLeft:width/20,
 
         }}
-        onPress={props.gotoprofile}
+        onPress={()=>{navigation.navigate('SearchBar')}}
         >
         <Icon name="search" size={width / 20} color={'white'} />
       </TouchableOpacity>
@@ -46,7 +46,7 @@ const Header = props => {
           marginRight:width/26
 
         }}
-        onPress={()=>{navigation.navigate('Profile')}}
+        onPress={props.gotoprofile}
         ></TouchableOpacity>
     </View>
   );
