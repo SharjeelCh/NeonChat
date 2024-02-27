@@ -20,15 +20,15 @@ const Header = props => {
         style={{
           borderColor: 'white',
           borderWidth: 0.2,
-          width: width / 12,
-          height: width / 12,
+          width: width / 10.5,
+          height: width / 10.5,
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 100,
           marginLeft:width/20,
 
         }}
-        onPress={()=>{navigation.navigate('SearchBar')}}
+        onPress={props.gotoprofile}
         >
         <Icon name="search" size={width / 20} color={'white'} />
       </TouchableOpacity>

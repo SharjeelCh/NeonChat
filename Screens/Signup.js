@@ -34,6 +34,7 @@ const Signup = () => {
         email: email,
         password: password,
         userId: userId,
+        profileImage: '',
       })
       .then(res => {
         console.log('data: ', res);

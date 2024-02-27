@@ -1,5 +1,5 @@
 import {View, Text, FlatList, StatusBar, TouchableOpacity} from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {height, width} from '../Componenets/dimension';
 import Header from '../Componenets/Header';
 import {useNavigation} from '@react-navigation/native';
@@ -8,20 +8,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = () => {
   const navigation = useNavigation();
   const [users, setUsers] = useState([]);
-  const [id,setId]=useState('');
-  useEffect(()=>{
+  const [id, setId] = useState('');
+  useEffect(() => {
     getUsers();
-  },[])
+    console.log(id);
+  }, []);
 
   const getUsers = async () => {
     const userid = await AsyncStorage.getItem('USERID');
-     setId(userid)
-     console.log(id)
+    // await AsyncStorage.setItem('isloggedin',JSON.stringify( false));
+    setId(userid);
+    console.log(id);
 
-    let tempdata=[]
-    firestore().collection('users').where('userId', '!=', userid).
-      get().then(res => {
-        if(res.docs!=[]){
+    let tempdata = [];
+    firestore()
+      .collection('users')
+      .where('userId', '!=', userid)
+      .get()
+      .then(res => {
+        if (res.docs != []) {
           res.docs.map(doc => {
             tempdata.push(doc.data());
           });
@@ -68,7 +73,7 @@ const Home = () => {
                     width: width / 1.4,
                   }}
                   onPress={() => {
-                    navigation.navigate('ChatScreen',{data:item,id:id} );
+                    navigation.navigate('ChatScreen', {data: item, id: id});
                   }}>
                   <View
                     style={{
@@ -121,10 +126,13 @@ const Home = () => {
       </View>
     );
   };
+  const hanfleprofile = () => {
+      navigation.navigate('Profile', {id: id});
+  };
   return (
     <View style={{flex: 1}}>
       <StatusBar backgroundColor={'#07635D'} />
-      <Header title="Home" />
+      <Header title="Home" gotoprofile={hanfleprofile} />
       <View
         style={{
           width: width,
