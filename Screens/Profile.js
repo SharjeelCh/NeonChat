@@ -106,16 +106,14 @@ const Profile = () => {
   const handleSavePhoto = () => {
     const userId = uuid.v4();
     firestore()
-      .collection('users')
-      .where('userId', '==', route.params?.id)
-      .get()
+    .collection('users')
+    .doc(route.params?.id)
+    .update({
+      profileImage: imageUri,
+    })
       .then(querySnapshot => {
         console.log(querySnapshot);
-        querySnapshot.forEach(doc => {
-          doc.ref.update({
-            profileImage: imageUri,
-          });
-        });
+        
         showTick(false);
         ToastAndroid.show('Profile Image Updated', ToastAndroid.SHORT);
         getProfileImage();

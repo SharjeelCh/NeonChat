@@ -120,10 +120,13 @@ const ChatScreen = () => {
   const handleaudioCall=()=>{
     navigation.navigate('AudioCall',{data:route.params.data, id:route.params.id});
   }
+  const handlevideoCall=()=>{
+    navigation.navigate('VideoCall',{data:route.params.data,id:route.params.id});
+  }
 
   return (
     <View style={{flex: 1, marginBottom: height / 70}}>
-      <ChatHeader name={route.params.data.username} oncallpress={handleaudioCall}/>
+      <ChatHeader name={route.params.data.username} onvideo={handlevideoCall} oncallpress={handleaudioCall}/>
 
       <GiftedChat
         messages={messageList}

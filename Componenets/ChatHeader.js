@@ -54,9 +54,7 @@ const ChatHeader = props => {
       </TouchableOpacity>
       <TouchableOpacity
         style={{marginLeft: width / 9, marginRight: width / 28}}
-        onPress={() => {
-          navigation.navigate('VideoCall');
-        }}>
+        onPress={props.onvideo}>
         <Ioni name="videocam" size={width / 18} color="white" />
       </TouchableOpacity>
       <TouchableOpacity

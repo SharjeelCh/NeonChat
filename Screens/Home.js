@@ -16,7 +16,11 @@ const Home = () => {
 
   const getUsers = async () => {
     const userid = await AsyncStorage.getItem('USERID');
-    // await AsyncStorage.setItem('isloggedin',JSON.stringify( false));
+   /* await AsyncStorage.setItem('isloggedin', JSON.stringify(false));
+    await AsyncStorage.setItem('NAME', JSON.stringify(''));
+    await AsyncStorage.setItem('EMAIL', JSON.stringify(''));
+    await AsyncStorage.setItem('USERID', JSON.stringify(''));
+    */
     setId(userid);
     console.log(id);
 
@@ -128,7 +132,7 @@ const Home = () => {
   };
   const hanfleprofile = () => {
     console.log('id home: ', id);
-      navigation.navigate('Profile', {id: id});
+    navigation.navigate('Profile', {id: id});
   };
   return (
     <View style={{flex: 1}}>
