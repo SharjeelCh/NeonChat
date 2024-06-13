@@ -5,6 +5,7 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -13,10 +14,11 @@ import StartButton from '../Componenets/StartButton';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import { UserContext } from './UserProvider';
+import {UserContext} from './UserProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Alert} from 'react-native';
 const Login = () => {
-  const { user, setUser } = useContext(UserContext);
+  const {user, setUser} = useContext(UserContext);
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
   const navigation = useNavigation();
@@ -35,26 +37,26 @@ const Login = () => {
             asyncdata(
               querySnapshot.docs[0].data().username,
               querySnapshot.docs[0].data().email,
-              querySnapshot.docs[0].data().userId
-              )
-            console.log("Login successful:", userData);
+              querySnapshot.docs[0].data().userId,
+            );
+            console.log('Login successful:', userData);
             navigation.navigate('Tabbar');
           } else {
-            console.log("Incorrect password");
+            console.log('Incorrect password');
           }
         });
       })
       .catch(error => {
         console.log(error);
+        Alert.alert('error', 'Error logging in', 'ok');
       });
 
-      const asyncdata = async (name,email,userId)=>{
-        await AsyncStorage.setItem('NAME',name);
-        await AsyncStorage.setItem('EMAIL',email);
-        await AsyncStorage.setItem('USERID',userId);
-        await AsyncStorage.setItem('isloggedin',JSON.stringify(true));
-
-      }
+    const asyncdata = async (name, email, userId) => {
+      await AsyncStorage.setItem('NAME', name);
+      await AsyncStorage.setItem('EMAIL', email);
+      await AsyncStorage.setItem('USERID', userId);
+      await AsyncStorage.setItem('isloggedin', JSON.stringify(true));
+    };
   };
   return (
     <View style={{flex: 1}}>

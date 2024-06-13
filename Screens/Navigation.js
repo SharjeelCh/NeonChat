@@ -14,6 +14,8 @@ import Profile from './Profile';
 import ChatScreen from './ChatScreen';
 import VideoCall from './VideoCall';
 import AudioCall from './AudioCall';
+import Onboarding from './Onboarding';
+import Splash from './Splash';
 const Navigation = () => {
   const stack = createNativeStackNavigator();
 
@@ -42,6 +44,7 @@ const Navigation = () => {
     <stack.Navigator screenOptions={{headerShown: false}}>
       {isLoggedIn ? (
         <>
+          <stack.Screen name="splash" component={Splash} />
           <stack.Screen name="Tabbar" component={Tabbar} />
           <stack.Screen name="SearchBar" component={SearchBar} />
           <stack.Screen name="ChatScreen" component={ChatScreen} />
@@ -52,6 +55,8 @@ const Navigation = () => {
         </>
       ) : (
         <>
+          <stack.Screen name="splash" component={Splash} />
+          <stack.Screen name="onboard" component={Onboarding} />
           <stack.Screen name="Login" component={Login} />
           <stack.Screen name="Signup" component={Signup} />
           <stack.Screen name="Tabbar" component={Tabbar} />

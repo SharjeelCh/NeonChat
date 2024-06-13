@@ -24,6 +24,7 @@
     "agora-rn-uikit": "^5.0.2",
     "d3-shape": "^3.2.0",
     "firebase": "^10.8.0",
+    "lottie-react-native": "^6.7.2",
     "react": "18.2.0",
     "react-native": "0.73.4",
     "react-native-agora": "^4.3.0",
