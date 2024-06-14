@@ -1,22 +1,36 @@
-import {View, Text, FlatList, StatusBar, TouchableOpacity, Image, ImageBackground} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StatusBar,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+  ActivityIndicator,
+  ToastAndroid,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {height, width} from '../Componenets/dimension';
 import Header from '../Componenets/Header';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../Componenets/Loader';
 const Home = () => {
   const navigation = useNavigation();
   const [users, setUsers] = useState([]);
   const [id, setId] = useState('');
+  const [loading, setloading] = useState(false);
+  const [currenImage, setCurrentImage] = useState(null);
   useEffect(() => {
     getUsers();
     console.log(id);
   }, []);
 
   const getUsers = async () => {
+    setloading(true);
     const userid = await AsyncStorage.getItem('USERID');
-   /* await AsyncStorage.setItem('isloggedin', JSON.stringify(false));
+    /* await AsyncStorage.setItem('isloggedin', JSON.stringify(false));
     await AsyncStorage.setItem('NAME', JSON.stringify(''));
     await AsyncStorage.setItem('EMAIL', JSON.stringify(''));
     await AsyncStorage.setItem('USERID', JSON.stringify(''));
@@ -25,18 +39,27 @@ const Home = () => {
     console.log(id);
 
     let tempdata = [];
-    firestore()
-      .collection('users')
-      .where('userId', '!=', userid)
-      .get()
-      .then(res => {
-        if (res.docs != []) {
-          res.docs.map(doc => {
-            tempdata.push(doc.data());
-          });
-          setUsers(tempdata);
-        }
-      });
+    try {
+      firestore()
+        .collection('users')
+        .where('userId', '!=', userid)
+        .get()
+        .then(res => {
+          if (res.docs != []) {
+            res.docs.map(doc => {
+              tempdata.push(doc.data());
+            });
+            setUsers(tempdata);
+          }
+        });
+      if (tempdata) {
+        setTimeout(() => {
+          setloading(false);
+        }, 2000);
+      } 
+    } catch (Error) {
+      ToastAndroid.show('Check ur internet connection', 2000);
+    }
   };
   const chatlist = () => {
     return (
@@ -49,86 +72,101 @@ const Home = () => {
           borderTopRightRadius: width / 18,
           paddingTop: height / 28,
         }}>
-        <FlatList
-          data={users}
-          renderItem={({item}) => {
-            return (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: width,
-                  height: height / 9.5,
-                  alignItems: 'center',
-                  marginLeft: width / 20,
-                  marginRight: width / 20,
-                }}>
-                <TouchableOpacity
+        {loading ? (
+          <Loader size={width / 24} color={'black'}></Loader>
+        ) : (
+          <FlatList
+            data={users}
+            renderItem={({item}) => {
+              return (
+                <View
                   style={{
-                    borderRadius: width / 3,
-                    width: width / 7.5,
-                    height: width / 7.5,
-                    borderWidth: 0.2,
-                    borderColor: 'black',
-                  }}>
-
-                  </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
+                    flexDirection: 'row',
+                    width: width,
+                    height: height / 9.5,
+                    alignItems: 'center',
                     marginLeft: width / 20,
                     marginRight: width / 20,
-                    width: width / 1.4,
-                  }}
-                  onPress={() => {
-                    navigation.navigate('ChatScreen', {data: item, id: id});
                   }}>
-                  <View
+                  <ImageBackground
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}>
-                    <Text
+                      borderRadius: width / 3,
+                      width: width / 7.5,
+                      height: width / 7.5,
+                    }}
+                    source={
+                      currenImage ? currenImage : require('../assets/image.png')
+                    }
+                    borderRadius={500}
+                    resizeMode="cover">
+                    <TouchableOpacity
                       style={{
-                        fontFamily: 'Nunito-Bold',
-                        fontSize: width / 18,
-                        color: 'black',
-                      }}>
-                      {item.username}
-                    </Text>
-                    <Text style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
-                      2 min ago
-                    </Text>
-                  </View>
-                  <View
+                        borderRadius: width / 3,
+                        width: width / 7.5,
+                        height: width / 7.5,
+                      }}></TouchableOpacity>
+                  </ImageBackground>
+                  <TouchableOpacity
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginTop: height / 220,
+                      marginLeft: width / 20,
+                      marginRight: width / 20,
+                      width: width / 1.4,
+                    }}
+                    onPress={() => {
+                      navigation.navigate('ChatScreen', {data: item, id: id});
                     }}>
-                    <Text style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
-                      hello how are you now
-                    </Text>
                     <View
                       style={{
-                        width: width / 18,
-                        height: width / 18,
-                        backgroundColor: 'red',
-                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
-                        borderRadius: width / 7,
-                        borderColor: 'red',
                       }}>
-                      <Text style={{color: 'white', fontFamily: 'Nunito-Bold'}}>
-                        3
+                      <Text
+                        style={{
+                          fontFamily: 'Nunito-Bold',
+                          fontSize: width / 18,
+                          color: 'black',
+                        }}>
+                        {item.username}
+                      </Text>
+                      <Text
+                        style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
+                        2 min ago
                       </Text>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        />
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: height / 220,
+                      }}>
+                      <Text
+                        style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
+                        hello how are you now
+                      </Text>
+                      <View
+                        style={{
+                          width: width / 18,
+                          height: width / 18,
+                          backgroundColor: 'red',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          borderRadius: width / 7,
+                          borderColor: 'red',
+                        }}>
+                        <Text
+                          style={{color: 'white', fontFamily: 'Nunito-Bold'}}>
+                          3
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
     );
   };

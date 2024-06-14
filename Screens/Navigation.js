@@ -42,9 +42,10 @@ const Navigation = () => {
   }, [setUser]);
   return (
     <stack.Navigator screenOptions={{headerShown: false}}>
+      <stack.Screen name="splash" component={Splash} />
+
       {isLoggedIn ? (
         <>
-          <stack.Screen name="splash" component={Splash} />
           <stack.Screen name="Login" component={Login} />
           <stack.Screen name="Signup" component={Signup} />
           <stack.Screen name="Tabbar" component={Tabbar} />
@@ -52,12 +53,10 @@ const Navigation = () => {
           <stack.Screen name="ChatScreen" component={ChatScreen} />
           <stack.Screen name="VideoCall" component={VideoCall} />
           <stack.Screen name="AudioCall" component={AudioCall} />
-
           <stack.Screen name="Profile" component={Profile} />
         </>
       ) : (
         <>
-          <stack.Screen name="splash" component={Splash} />
           <stack.Screen name="onboard" component={Onboarding} />
           <stack.Screen name="Login" component={Login} />
           <stack.Screen name="Signup" component={Signup} />

@@ -52,7 +52,7 @@ const Profile = () => {
     await AsyncStorage.setItem('EMAIL', '');
     await AsyncStorage.setItem('USERID', '');
     await AsyncStorage.setItem('isloggedin', JSON.stringify(false));
-    
+
     setTimeout(() => {
       navigation.reset({index: 0, routes: [{name: 'Login'}]});
       setactivity(false);
@@ -246,7 +246,9 @@ const Profile = () => {
                 elevation: 1,
               }}>
               <Image
-                source={{uri: currentImage}}
+                source={
+                  currentImage ? currentImage : require('../assets/image.png')
+                }
                 resizeMode="cover"
                 style={{
                   width: width / 2.1,

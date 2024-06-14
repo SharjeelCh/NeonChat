@@ -23,7 +23,7 @@ const ChatScreen = () => {
   const route = useRoute();
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
-  const navigation=useNavigation();
+  const navigation = useNavigation();
   const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
 
   const {data, id} = route.params;
@@ -41,7 +41,7 @@ const ChatScreen = () => {
         setMessageList(allmessages);
       });
     console.log(route.params);
-      setLoading(false);
+    setLoading(false);
     return () => subscriber();
   }, []);
 
@@ -90,44 +90,55 @@ const ChatScreen = () => {
 
   const renderBubble = props => {
     return (
-     
-        <Bubble
-          {...props}
-          wrapperStyle={{
-            right: {
-              backgroundColor: '#07635D',
-              elevation: 1,
-            },
-            left: {
-              backgroundColor: '#f9f9f9',
-              elevation: 1,
-            },
-          }}
-          textStyle={{
-            right: {
-              color: 'white',
-              fontFamily: 'Nunito-Regular',
-            },
-            left: {
-              color: 'black',
-              fontFamily: 'Nunito-Regular',
-            },
-          }}
-        />
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#07635D',
+            elevation: 1,
+          },
+          left: {
+            backgroundColor: '#f9f9f9',
+            elevation: 1,
+          },
+        }}
+        textStyle={{
+          right: {
+            color: 'white',
+            fontFamily: 'Nunito-Regular',
+          },
+          left: {
+            color: 'black',
+            fontFamily: 'Nunito-Regular',
+          },
+        }}
+      />
     );
   };
 
-  const handleaudioCall=()=>{
-    navigation.navigate('AudioCall',{data:route.params.data, id:route.params.id});
-  }
-  const handlevideoCall=()=>{
-    navigation.navigate('VideoCall',{data:route.params.data,id:route.params.id});
-  }
+  const handleaudioCall = () => {
+    navigation.navigate('AudioCall', {
+      data: route.params.data,
+      id: route.params.id,
+    });
+  };
+  const handlevideoCall = () => {
+    navigation.navigate('VideoCall', {
+      data: route.params.data,
+      id: route.params.id,
+    });
+  };
 
   return (
     <View style={{flex: 1, marginBottom: height / 70}}>
-      <ChatHeader name={route.params.data.username} onvideo={handlevideoCall} oncallpress={handleaudioCall}/>
-
+      <ChatHeader
+        name={route.params.data.username}
+        onvideo={handlevideoCall}
+        oncallpress={handleaudioCall}
+      />
+      <View style={{width: width, position: 'absolute', alignItems: 'center',top: height / 14,zIndex:1}}>
+        <Text style={styles.aboutme}>{route.params.data.aboutme}</Text>
+      </View>
       <GiftedChat
         messages={messageList}
         onSend={messages => onSend(messages)}
@@ -137,6 +148,7 @@ const ChatScreen = () => {
         renderBubble={renderBubble}
         renderInputToolbar={() => {
           return (
+            
             <View style={styles.customInputContainer}>
               <View
                 style={{
@@ -203,6 +215,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 1,
+  },
+  aboutme: {
+    color: 'rgba(0,0,0,1)',
+    fontSize:width/27,
+    position: 'relative',
+    fontFamily:'Nunito-Bold',
+    fontStyle:'italic',
+    fontWeight:'700'
   },
 });
 

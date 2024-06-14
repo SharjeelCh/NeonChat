@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ImageBackground} from 'react-native';
 import React from 'react';
 import {height, width} from './dimension';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -21,23 +21,30 @@ const ChatHeader = props => {
         position: 'relative',
         flexDirection: 'row',
         alignItems: 'center',
+        paddingHorizontal:width/30,
+        justifyContent:'space-evenly'
       }}>
       <TouchableOpacity
-        style={{marginHorizontal: width / 28}}
+        style={{marginLeft: width / 28,width:width/10}}
         onPress={() => {
           navigation.replace('Tabbar');
         }}>
-        <Icon name="chevron-left" size={width / 18} color="white" />
+        <Icon name="chevron-left" size={width / 16} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          width: width / 10,
-          height: width / 10,
-          borderColor: 'white',
-          borderWidth: 0.6,
-          borderRadius: 100,
-        }}></TouchableOpacity>
-      <TouchableOpacity >
+      <ImageBackground
+        source={
+          props.profileImage
+            ? props.profileImage
+            : require('../assets/image.png')
+        }>
+        <TouchableOpacity
+          style={{
+            width: width / 10,
+            height: width / 10,
+            borderRadius: 100,
+          }}></TouchableOpacity>
+      </ImageBackground>
+      <TouchableOpacity>
         <Text
           style={{
             fontFamily: 'Nunito-SemiBold',

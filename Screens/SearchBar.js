@@ -7,16 +7,19 @@ import {
   StyleSheet,
   Pressable,
   FlatList,
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {height, width} from '../Componenets/dimension';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loader from '../Componenets/Loader';
 export const SearchBar = () => {
   const [searchText, setSearchText] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const [id, setId] = useState('');
+  const [loading, setloading] = useState(false);
 
   const navigation = useNavigation();
   const handleSearch = () => {
@@ -36,6 +39,7 @@ export const SearchBar = () => {
       }
 
       try {
+        setloading(true);
         const currentUserId = await AsyncStorage.getItem('USERID');
         setId(currentUserId);
         console.log('Current User ID:', currentUserId);
@@ -51,8 +55,10 @@ export const SearchBar = () => {
           .filter(user => user.userId !== currentUserId);
 
         setSearchResult(data);
-      } catch (error) {
-      }
+        console.log(snapshot.docs)
+        if(snapshot.docs!==null)
+        setloading(false);
+      } catch (error) {}
     };
 
     fetchData();
@@ -95,7 +101,7 @@ export const SearchBar = () => {
             </TouchableOpacity>
           ) : (
             <Pressable style={{marginRight: width / 30}}>
-              <Icon name="close-sharp" size={width / 20} color={'#07635D'} />
+              <Icon name="close-sharp" size={width / 16} color={'#07635D'} />
             </Pressable>
           )}
           <TouchableOpacity
@@ -108,63 +114,79 @@ export const SearchBar = () => {
       {searchResult.length > 0 ? (
         <View style={{width: '100%', padding: width / 20}}>
           <Text style={{color: 'rgba(255,255,255,0.8)'}}>Chats</Text>
-          <FlatList
-            data={searchResult}
-            renderItem={({item}) => {
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    width: width,
-                    height: height / 9.5,
-                    alignItems: 'center',
-                  }}>
+          {loading ? (
+            <Loader size={width / 24} color={'white'}></Loader>
+          ) : (
+            <FlatList
+              data={searchResult}
+              renderItem={({item}) => {
+                return (
                   <View
                     style={{
-                      borderRadius: width / 3,
-                      width: width / 7.5,
-                      height: width / 7.5,
-                      borderWidth: 0.2,
-                      borderColor: 'white',
-                    }}></View>
-                  <TouchableOpacity
-                    style={{
-                      marginLeft: width / 20,
-                      marginRight: width / 20,
-                      width: width / 1.4,
-                      height: height / 13,
-                      justifyContent: 'center',
-                    }}
-                    onPress={() => {
-                      navigation.navigate('ChatScreen', {
-                        data: item,
-                        id: id,
-                      });
-                      setSearchResult('');
-                      setSearchText('');
+                      flex: 1,
+                      flexDirection: 'row',
+                      width: width,
+                      height: height / 9.5,
+                      alignItems: 'center',
                     }}>
-                    <Text
+                    <ImageBackground
                       style={{
-                        color: 'white',
-                        fontFamily: 'Nunito-Bold',
-                        fontSize: width / 18,
-                      }}>
-                      {item.username}
-                    </Text>
-                    <Text
+                        borderRadius: width / 3,
+                        width: width / 7.5,
+                        height: width / 7.5,
+                      }}
+                      source={
+                        item.profileImage
+                          ? item.profileImage
+                          : require('../assets/image.png')
+                      }
+                      borderRadius={500}
+                      resizeMode="cover">
+                      <View
+                        style={{
+                          borderRadius: width / 3,
+                          width: width / 7.5,
+                          height: width / 7.5,
+                        }}></View>
+                    </ImageBackground>
+                    <TouchableOpacity
                       style={{
-                        fontFamily: 'Nunito-Medium',
-                        color: 'rgba(255,255,255,0.8)',
+                        marginLeft: width / 20,
+                        marginRight: width / 20,
+                        width: width / 1.4,
+                        height: height / 13,
+                        justifyContent: 'center',
+                      }}
+                      onPress={() => {
+                        navigation.navigate('ChatScreen', {
+                          data: item,
+                          id: id,
+                        });
+                        setSearchResult('');
+                        setSearchText('');
                       }}>
-                      {item.aboutme}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            }}
-            keyExtractor={item => item.userId}
-          />
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontFamily: 'Nunito-Bold',
+                          fontSize: width / 18,
+                        }}>
+                        {item.username}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: 'Nunito-Medium',
+                          color: 'rgba(255,255,255,0.8)',
+                        }}>
+                        {item.aboutme}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              }}
+              keyExtractor={item => item.userId}
+            />
+          )}
         </View>
       ) : null}
     </View>

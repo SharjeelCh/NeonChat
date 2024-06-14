@@ -6,8 +6,10 @@ import Settings from '../Screens/Settings';
 import Profile from '../Screens/Profile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Call from '../Screens/Call';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const Tabbar = () => {
+export const Tabbar =  () => {
+
   const stack = createBottomTabNavigator();
   return (
     <stack.Navigator
