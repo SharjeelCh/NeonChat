@@ -204,7 +204,6 @@ const Profile = () => {
           inputStyle={{
             color: 'black',
             fontFamily: 'Nunito-SemiBold',
-            letterSpacing: 1,
           }}
           // TextInput props
           autoCapitalize={'none'}

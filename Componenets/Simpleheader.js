@@ -16,20 +16,20 @@ const Simpleheader = (props) => {
         position: 'relative',
         flexDirection: 'row',
         alignItems: 'center',
+        paddingLeft:width/46,
       }}>
       <TouchableOpacity
-        style={{marginHorizontal: width / 25}}
+        style={{marginHorizontal: width / 25,width:width/10}}
         onPress={() => {
           navigation.replace('Tabbar');
         }}>
-        <Icon name="chevron-left" size={width / 18} color="black" />
+        <Icon name="chevron-left" size={width / 16} color="black" />
       </TouchableOpacity>
       <Text
         style={{
           fontFamily: 'Nunito-SemiBold',
           color: 'black',
           fontSize: width / 18,
-          marginHorizontal: width / 28,
           width: width / 2.7,
         }}
         ellipsizeMode="tail"
