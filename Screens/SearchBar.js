@@ -12,9 +12,12 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {height, width} from '../Componenets/dimension';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const SearchBar = () => {
   const [searchText, setSearchText] = useState('');
   const [searchResult, setSearchResult] = useState([]);
+  const [id, setId] = useState('');
+
   const navigation = useNavigation();
   const handleSearch = () => {
     // onSearch(searchText);
@@ -32,27 +35,42 @@ export const SearchBar = () => {
         return;
       }
 
-      const snapshot = await firestore()
-        .collection('users')
-        .where('username', '>=', searchText.toLowerCase())
-        .where('username', '<=', searchText.toLowerCase() + '\uf8ff')
-        .get();
+      try {
+        const currentUserId = await AsyncStorage.getItem('USERID');
+        setId(currentUserId);
+        console.log('Current User ID:', currentUserId);
 
-      const data = snapshot.docs.map(doc => doc.data());
-      setSearchResult(data);
+        const snapshot = await firestore()
+          .collection('users')
+          .where('username', '>=', searchText.toLowerCase())
+          .where('username', '<=', searchText.toLowerCase() + '\uf8ff')
+          .get();
+
+        const data = snapshot.docs
+          .map(doc => doc.data())
+          .filter(user => user.userId !== currentUserId);
+
+        setSearchResult(data);
+      } catch (error) {
+      }
     };
-    console.log(searchResult);
 
     fetchData();
   }, [searchText]);
 
   return (
-    <View style={{flex: 1, backgroundColor: '#07635D'}}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: '#07635D',
+        paddingHorizontal: width / 40,
+      }}>
       <View style={styles.container}>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'space-around',
             marginTop: height / 90,
           }}>
           <TouchableOpacity
@@ -60,7 +78,7 @@ export const SearchBar = () => {
               navigation.goBack();
             }}
             style={{marginLeft: width / 50}}>
-            <Icon name="arrow-back-sharp" size={width / 17} color={'white'} />
+            <Icon name="arrow-back-sharp" size={width / 13} color={'white'} />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -73,7 +91,7 @@ export const SearchBar = () => {
             <TouchableOpacity
               onPress={handleClear}
               style={{marginRight: width / 30}}>
-              <Icon name="close-sharp" size={width / 20} color={'white'} />
+              <Icon name="close-sharp" size={width / 16} color={'white'} />
             </TouchableOpacity>
           ) : (
             <Pressable style={{marginRight: width / 30}}>
@@ -83,13 +101,13 @@ export const SearchBar = () => {
           <TouchableOpacity
             onPress={handleSearch}
             style={{marginRight: width / 50}}>
-            <Icon name="search" size={width / 17} color={'white'} />
+            <Icon name="search" size={width / 13} color={'white'} />
           </TouchableOpacity>
         </View>
       </View>
-      {searchResult.length > 0 && (
-        <View>
-          <Text>Chats</Text>
+      {searchResult.length > 0 ? (
+        <View style={{width: '100%', padding: width / 20}}>
+          <Text style={{color: 'rgba(255,255,255,0.8)'}}>Chats</Text>
           <FlatList
             data={searchResult}
             renderItem={({item}) => {
@@ -101,8 +119,6 @@ export const SearchBar = () => {
                     width: width,
                     height: height / 9.5,
                     alignItems: 'center',
-                    marginLeft: width / 20,
-                    marginRight: width / 20,
                   }}>
                   <View
                     style={{
@@ -110,13 +126,23 @@ export const SearchBar = () => {
                       width: width / 7.5,
                       height: width / 7.5,
                       borderWidth: 0.2,
-                      borderColor: 'black',
+                      borderColor: 'white',
                     }}></View>
-                  <View
+                  <TouchableOpacity
                     style={{
                       marginLeft: width / 20,
                       marginRight: width / 20,
                       width: width / 1.4,
+                      height: height / 13,
+                      justifyContent: 'center',
+                    }}
+                    onPress={() => {
+                      navigation.navigate('ChatScreen', {
+                        data: item,
+                        id: id,
+                      });
+                      setSearchResult('');
+                      setSearchText('');
                     }}>
                     <Text
                       style={{
@@ -126,17 +152,21 @@ export const SearchBar = () => {
                       }}>
                       {item.username}
                     </Text>
-                    <Text style={{fontFamily: 'Nunito-Medium', color: 'grey'}}>
+                    <Text
+                      style={{
+                        fontFamily: 'Nunito-Medium',
+                        color: 'rgba(255,255,255,0.8)',
+                      }}>
                       {item.aboutme}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 </View>
               );
             }}
-            keyExtractor={item => item.username}
+            keyExtractor={item => item.userId}
           />
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
@@ -154,6 +184,7 @@ const styles = StyleSheet.create({
     marginLeft: width / 20,
     marginRight: width / 20,
     width: width / 1.6,
+    fontSize: height / 45,
     fontFamily: 'Nunito-Medium',
   },
   backButton: {

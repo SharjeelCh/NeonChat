@@ -1,4 +1,4 @@
-import {View, Text, FlatList, StatusBar, TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, StatusBar, TouchableOpacity, Image, ImageBackground} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {height, width} from '../Componenets/dimension';
 import Header from '../Componenets/Header';
@@ -69,7 +69,9 @@ const Home = () => {
                     height: width / 7.5,
                     borderWidth: 0.2,
                     borderColor: 'black',
-                  }}></TouchableOpacity>
+                  }}>
+
+                  </TouchableOpacity>
                 <TouchableOpacity
                   style={{
                     marginLeft: width / 20,

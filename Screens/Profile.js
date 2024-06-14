@@ -10,13 +10,14 @@ import {
   Modal,
   ToastAndroid,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {height, width} from '../Componenets/dimension';
 import {Fumi, Jiro, Sae} from 'react-native-textinput-effects';
 import Simpleheader from '../Componenets/Simpleheader';
@@ -25,6 +26,7 @@ import {
   updateEmailName,
   updateUserName,
 } from '../Componenets/ProfileUpdateFuncs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -41,6 +43,21 @@ const Profile = () => {
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [isAboutFocused, setIsAboutFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [showactivity, setactivity] = useState(false);
+  const navigation = useNavigation();
+
+  const handleLogOut = async () => {
+    setactivity(true);
+    await AsyncStorage.setItem('NAME', '');
+    await AsyncStorage.setItem('EMAIL', '');
+    await AsyncStorage.setItem('USERID', '');
+    await AsyncStorage.setItem('isloggedin', JSON.stringify(false));
+    
+    setTimeout(() => {
+      navigation.reset({index: 0, routes: [{name: 'Login'}]});
+      setactivity(false);
+    }, 1000);
+  };
 
   const handleLongPress = () => {
     setModalVisible(true);
@@ -106,14 +123,14 @@ const Profile = () => {
   const handleSavePhoto = () => {
     const userId = uuid.v4();
     firestore()
-    .collection('users')
-    .doc(route.params?.id)
-    .update({
-      profileImage: imageUri,
-    })
+      .collection('users')
+      .doc(route.params?.id)
+      .update({
+        profileImage: imageUri,
+      })
       .then(querySnapshot => {
         console.log(querySnapshot);
-        
+
         showTick(false);
         ToastAndroid.show('Profile Image Updated', ToastAndroid.SHORT);
         getProfileImage();
@@ -187,7 +204,7 @@ const Profile = () => {
           inputStyle={{
             color: 'black',
             fontFamily: 'Nunito-SemiBold',
-            letterSpacing: 1.7,
+            letterSpacing: 1,
           }}
           // TextInput props
           autoCapitalize={'none'}
@@ -325,6 +342,34 @@ const Profile = () => {
         handlenewemailFunc,
         setIsEmailFocused,
         isEmailFocused,
+      )}
+      {!showactivity ? (
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#07635D',
+            width: width / 2.3,
+            height: height / 17,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: height / 55,
+            marginTop: height / 3.7,
+          }}
+          onPress={handleLogOut}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'Nunito-SemiBold',
+              fontSize: height / 42,
+            }}>
+            Logout
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <ActivityIndicator
+          size={height / 28}
+          color={'orange'}
+          style={{marginTop: height / 3.7}}
+        />
       )}
     </View>
   );

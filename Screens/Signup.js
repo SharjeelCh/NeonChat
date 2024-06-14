@@ -26,11 +26,13 @@ const Signup = () => {
   const [repeatPass, setrepeat] = useState('');
   const handleRegister = () => {
     const userId = uuid.v4();
+    const lowercasedUsername = username.toLowerCase();
+
     firestore()
       .collection('users')
       .doc(userId)
       .set({
-        username: username,
+        username: lowercasedUsername,
         email: email,
         password: password,
         userId: userId,

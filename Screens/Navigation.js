@@ -45,6 +45,8 @@ const Navigation = () => {
       {isLoggedIn ? (
         <>
           <stack.Screen name="splash" component={Splash} />
+          <stack.Screen name="Login" component={Login} />
+          <stack.Screen name="Signup" component={Signup} />
           <stack.Screen name="Tabbar" component={Tabbar} />
           <stack.Screen name="SearchBar" component={SearchBar} />
           <stack.Screen name="ChatScreen" component={ChatScreen} />
