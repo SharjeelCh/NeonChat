@@ -133,6 +133,7 @@ const ChatScreen = () => {
     <View style={{flex: 1, marginBottom: height / 70}}>
       <ChatHeader
         name={route.params.data.username}
+        id={route.params.data.userId}
         onvideo={handlevideoCall}
         oncallpress={handleaudioCall}
       />

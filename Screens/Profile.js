@@ -11,6 +11,7 @@ import {
   ToastAndroid,
   Text,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 import firestore from '@react-native-firebase/firestore';
@@ -21,6 +22,10 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {height, width} from '../Componenets/dimension';
 import {Fumi, Jiro, Sae} from 'react-native-textinput-effects';
 import Simpleheader from '../Componenets/Simpleheader';
+import {launchCamera} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+
 import {
   AboutMe,
   updateEmailName,
@@ -87,59 +92,97 @@ const Profile = () => {
     updateEmailName(route.params?.id, tempemail);
   };
 
-  const handleChoosePhoto = () => {
-    const options = {
-      title: 'Select Avatar',
-      storageOptions: {
-        skipBackup: true,
-        path: 'default',
-      },
-    };
-
-    ImagePicker.launchCamera(options, response => {
-      response.assets.forEach(asset => {
-        console.log('Response = ', response);
-
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
-        } else {
-          const source = {uri: asset.uri};
-          setImageUri(source.uri);
-          setCurrentImage(source.uri);
-          showTick(true);
-          console.log(route.params?.id);
-        }
-      });
-    });
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.CAMERA);
+      return result === RESULTS.GRANTED;
+    } else if (Platform.OS === 'ios') {
+      const result = await request(PERMISSIONS.IOS.CAMERA);
+      return result === RESULTS.GRANTED;
+    }
+    return false;
   };
+
+  const handleChoosePhoto = async () => {
+    const hasPermission = await requestCameraPermission();
+
+    if (!hasPermission) {
+      Alert.alert('Error', 'Camera permission is required to take photos');
+      return;
+    }
+
+    try {
+      const result = await launchCamera({
+        mediaType: 'photo',
+        cameraType: 'back',
+        saveToPhotos: true,
+        quality: 0.5,
+      });
+
+      if (result.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (result.errorCode) {
+        console.log('ImagePicker Error: ', result.errorMessage);
+        Alert.alert('Error', result.errorMessage);
+      } else if (result.assets && result.assets.length > 0) {
+        console.log(result.assets);
+        const uri = result.assets[0].uri;
+        if (uri) {
+          console.log(uri);
+          setImageUri(uri);
+          setCurrentImage(uri);
+          showTick(true);
+        }
+      }
+    } catch (error) {
+      console.log('Error launching camera: ', error);
+      Alert.alert('Error', 'Failed to launch camera');
+    }
+  };
+
   useEffect(() => {
-    console.log('id: ', route.params);
     getProfileImage();
   }, []);
-  const handleSavePhoto = () => {
-    const userId = uuid.v4();
-    firestore()
-      .collection('users')
-      .doc(route.params?.id)
-      .update({
-        profileImage: imageUri,
-      })
-      .then(querySnapshot => {
-        console.log(querySnapshot);
 
-        showTick(false);
-        ToastAndroid.show('Profile Image Updated', ToastAndroid.SHORT);
-        getProfileImage();
-      })
-      .catch(error => {
-        console.error('Error saving data: ', error);
-      });
+  const uploadImageToFirebase = async uri => {
+    if (!uri) return null;
+
+    const fileName = `${uuid.v4()}.jpg`;
+    const reference = storage().ref(fileName);
+    const task = reference.putFile(uri);
+
+    try {
+      await task;
+      const url = await reference.getDownloadURL();
+      return url;
+    } catch (error) {
+      console.error('Error uploading image: ', error);
+      return null;
+    }
   };
 
+  const handleSavePhoto = async () => {
+    const imageUrl = await uploadImageToFirebase(imageUri);
+
+    if (imageUrl) {
+      firestore()
+        .collection('users')
+        .doc(route.params?.id)
+        .update({
+          profileImage: imageUrl,
+        })
+        .then(() => {
+          showTick(false);
+          ToastAndroid.show('Profile Image Updated', ToastAndroid.SHORT);
+          getProfileImage();
+        })
+        .catch(error => {
+          console.error('Error saving data: ', error);
+        });
+    } else {
+      Alert.alert('Error', 'Failed to upload image');
+    }
+  };
   const getProfileImage = () => {
     firestore()
       .collection('users')
@@ -196,7 +239,6 @@ const Profile = () => {
           placeholderTextColor={'black'}
           inputPadding={16}
           labelHeight={24}
-          // active border height
           borderHeight={0.3}
           onChangeText={text => {
             handle(text);
@@ -205,7 +247,6 @@ const Profile = () => {
             color: 'black',
             fontFamily: 'Nunito-SemiBold',
           }}
-          // TextInput props
           autoCapitalize={'none'}
           autoCorrect={false}
           onFocus={() => setIsFocused(true)}
@@ -247,7 +288,9 @@ const Profile = () => {
               }}>
               <Image
                 source={
-                  currentImage ? currentImage : require('../assets/image.png')
+                  currentImage
+                    ? {uri: currentImage}
+                    : require('../assets/image.png')
                 }
                 resizeMode="cover"
                 style={{
@@ -326,7 +369,7 @@ const Profile = () => {
       )}
       {info(
         'About',
-        'i am availible',
+        tempabout,
         'information-circle',
         'pencil',
         handlenewabout,

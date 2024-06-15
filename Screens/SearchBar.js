@@ -55,9 +55,8 @@ export const SearchBar = () => {
           .filter(user => user.userId !== currentUserId);
 
         setSearchResult(data);
-        console.log(snapshot.docs)
-        if(snapshot.docs!==null)
-        setloading(false);
+        console.log(snapshot.docs);
+        if (snapshot.docs !== null) setloading(false);
       } catch (error) {}
     };
 
@@ -137,7 +136,7 @@ export const SearchBar = () => {
                       }}
                       source={
                         item.profileImage
-                          ? item.profileImage
+                          ? {uri: item.profileImage}
                           : require('../assets/image.png')
                       }
                       borderRadius={500}

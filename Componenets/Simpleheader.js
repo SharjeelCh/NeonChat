@@ -21,7 +21,7 @@ const Simpleheader = (props) => {
       <TouchableOpacity
         style={{marginHorizontal: width / 25,width:width/10}}
         onPress={() => {
-          navigation.replace('Tabbar');
+          navigation.goBack();
         }}>
         <Icon name="chevron-left" size={width / 16} color="black" />
       </TouchableOpacity>

@@ -56,7 +56,7 @@ const Home = () => {
         setTimeout(() => {
           setloading(false);
         }, 2000);
-      } 
+      }
     } catch (Error) {
       ToastAndroid.show('Check ur internet connection', 2000);
     }
@@ -95,7 +95,9 @@ const Home = () => {
                       height: width / 7.5,
                     }}
                     source={
-                      currenImage ? currenImage : require('../assets/image.png')
+                      item.profileImage
+                        ? {uri: item.profileImage}
+                        : require('../assets/image.png')
                     }
                     borderRadius={500}
                     resizeMode="cover">
@@ -177,7 +179,7 @@ const Home = () => {
   return (
     <View style={{flex: 1}}>
       <StatusBar backgroundColor={'#07635D'} />
-      <Header title="Home" gotoprofile={hanfleprofile} />
+      <Header title="Home" gotoprofile={hanfleprofile} id={id} />
       <View
         style={{
           width: width,

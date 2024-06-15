@@ -5,14 +5,21 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {height, width} from './dimension';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
+import {getProfileImage} from './ProfileUpdateFuncs';
 
 const Header = props => {
   const navigation = useNavigation();
   const [currenImage, setCurrentImage] = useState(null);
+
+  useEffect(() => {
+    getProfileImage(props.id, setCurrentImage);
+    console.log('id', props.id);
+  }, [props.id]);
+
   return (
     <View
       style={{
@@ -55,7 +62,9 @@ const Header = props => {
           height: width / 9,
           marginRight: width / 26,
         }}
-        source={currenImage ? currenImage : require('../assets/image.png')}
+        source={
+          currenImage ? {uri: currenImage} : require('../assets/image.png')
+        }
         borderRadius={500}
         resizeMode="cover">
         <TouchableOpacity
