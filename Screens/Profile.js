@@ -13,7 +13,6 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import * as ImagePicker from 'react-native-image-picker';
 import firestore from '@react-native-firebase/firestore';
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -26,13 +25,16 @@ import {launchCamera} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
-
 import {
   AboutMe,
+  deletePhoto,
+  openGallery,
+  requestCameraPermission,
   updateEmailName,
   updateUserName,
 } from '../Componenets/ProfileUpdateFuncs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ProfileModal from '../Componenets/ProfileModal';
 
 const Profile = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -50,6 +52,8 @@ const Profile = () => {
   const [isAboutFocused, setIsAboutFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [showactivity, setactivity] = useState(false);
+  const [profileVisible, setProfileVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const handleLogOut = async () => {
@@ -93,17 +97,6 @@ const Profile = () => {
     updateEmailName(route.params?.id, tempemail);
   };
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.CAMERA);
-      return result === RESULTS.GRANTED;
-    } else if (Platform.OS === 'ios') {
-      const result = await request(PERMISSIONS.IOS.CAMERA);
-      return result === RESULTS.GRANTED;
-    }
-    return false;
-  };
-
   const handleChoosePhoto = async () => {
     const hasPermission = await requestCameraPermission();
 
@@ -145,7 +138,16 @@ const Profile = () => {
     getProfileImage();
   }, []);
 
+  const handleDeletePhoto = async () => {
+    await deletePhoto(route.params?.id, setCurrentImage);
+  };
+
+  const handleGallery = async () => {
+    await openGallery(setCurrentImage, showTick, setImageUri);
+  };
+
   const uploadImageToFirebase = async uri => {
+    setLoading(true);
     if (!uri) return null;
 
     const fileName = `${uuid.v4()}.jpg`;
@@ -176,6 +178,7 @@ const Profile = () => {
           showTick(false);
           ToastAndroid.show('Profile Image Updated', ToastAndroid.SHORT);
           getProfileImage();
+          setLoading(false)
         })
         .catch(error => {
           console.error('Error saving data: ', error);
@@ -337,7 +340,11 @@ const Profile = () => {
               alignItems: 'center',
             }}
             onPress={handleSavePhoto}>
-            <Icon name="checkmark" size={width / 15} color="white" />
+            {loading ? (
+              <ActivityIndicator size={width / 15} color="white" />
+            ) : (
+              <Icon name="checkmark" size={width / 15} color="white" />
+            )}
           </TouchableOpacity>
         )}
         {!tick && (
@@ -353,10 +360,19 @@ const Profile = () => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            onPress={handleChoosePhoto}>
+            onPress={() => {
+              setProfileVisible(true);
+            }}>
             <Icon name="camera" size={width / 15} color="white" />
           </TouchableOpacity>
         )}
+        <ProfileModal
+          isModalVisible={profileVisible}
+          setisModalVisible={setProfileVisible}
+          openCamera={handleChoosePhoto}
+          openGallery={handleGallery}
+          deletePhoto={handleDeletePhoto}
+        />
       </View>
       {info(
         'Username',
