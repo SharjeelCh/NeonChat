@@ -18,7 +18,7 @@ const Header = props => {
   useEffect(() => {
     getProfileImage(props.id, setCurrentImage);
     console.log('id', props.id);
-  }, [props.id]);
+  }, [props.id,Header]);
 
   return (
     <View

@@ -35,7 +35,7 @@ const ChatHeader = props => {
       <TouchableOpacity
         style={{marginLeft: width / 28, width: width / 10}}
         onPress={() => {
-          navigation.replace('Tabbar');
+          navigation.goBack();
         }}>
         <Icon name="chevron-left" size={width / 16} color="white" />
       </TouchableOpacity>

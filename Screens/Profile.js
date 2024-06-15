@@ -26,6 +26,7 @@ import {launchCamera} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
+
 import {
   AboutMe,
   updateEmailName,
@@ -116,7 +117,7 @@ const Profile = () => {
         mediaType: 'photo',
         cameraType: 'back',
         saveToPhotos: true,
-        quality: 0.5,
+        quality: 0.3,
       });
 
       if (result.didCancel) {
