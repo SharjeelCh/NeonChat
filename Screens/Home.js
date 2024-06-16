@@ -25,7 +25,7 @@ const Home = () => {
   useEffect(() => {
     getUsers();
     console.log(id);
-  }, []);
+  }, [id]);
 
   const getUsers = async () => {
     setloading(true);
@@ -50,13 +50,9 @@ const Home = () => {
               tempdata.push(doc.data());
             });
             setUsers(tempdata);
+            setloading(false);
           }
         });
-      if (tempdata) {
-        setTimeout(() => {
-          setloading(false);
-        }, 2000);
-      }
     } catch (Error) {
       ToastAndroid.show('Check ur internet connection', 2000);
     }

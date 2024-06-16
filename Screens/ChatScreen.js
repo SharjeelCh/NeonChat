@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {Bubble, GiftedChat} from 'react-native-gifted-chat';
+import {Avatar, Bubble, GiftedChat} from 'react-native-gifted-chat';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
@@ -17,6 +17,7 @@ import {height, width} from '../Componenets/dimension';
 import ChatHeader from '../Componenets/ChatHeader';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
+import {getProfileImage} from '../Componenets/ProfileUpdateFuncs';
 
 const ChatScreen = () => {
   const [messageList, setMessageList] = useState([]);
@@ -95,11 +96,11 @@ const ChatScreen = () => {
         wrapperStyle={{
           right: {
             backgroundColor: '#07635D',
-            elevation: 1,
+            elevation: 2,
           },
           left: {
             backgroundColor: '#f9f9f9',
-            elevation: 1,
+            elevation: 2,
           },
         }}
         textStyle={{
@@ -115,6 +116,8 @@ const ChatScreen = () => {
       />
     );
   };
+
+ 
 
   const handleaudioCall = () => {
     navigation.navigate('AudioCall', {
@@ -137,7 +140,14 @@ const ChatScreen = () => {
         onvideo={handlevideoCall}
         oncallpress={handleaudioCall}
       />
-      <View style={{width: width, position: 'absolute', alignItems: 'center',top: height / 14,zIndex:1}}>
+      <View
+        style={{
+          width: width,
+          position: 'absolute',
+          alignItems: 'center',
+          top: height / 14,
+          zIndex: 1,
+        }}>
         <Text style={styles.aboutme}>{route.params.data.aboutme}</Text>
       </View>
       <GiftedChat
@@ -147,9 +157,10 @@ const ChatScreen = () => {
           _id: route.params.id,
         }}
         renderBubble={renderBubble}
+        alwaysShowSend={true}
+        isLoadingEarlier={true}
         renderInputToolbar={() => {
           return (
-            
             <View style={styles.customInputContainer}>
               <View
                 style={{
@@ -219,11 +230,11 @@ const styles = StyleSheet.create({
   },
   aboutme: {
     color: 'rgba(0,0,0,1)',
-    fontSize:width/27,
+    fontSize: width / 27,
     position: 'relative',
-    fontFamily:'Nunito-Bold',
-    fontStyle:'italic',
-    fontWeight:'700'
+    fontFamily: 'Nunito-Bold',
+    fontStyle: 'italic',
+    fontWeight: '700',
   },
 });
 

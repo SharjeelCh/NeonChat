@@ -1,10 +1,9 @@
-import { deleteObject, ref } from 'firebase/storage';
-import { Alert, Platform, ToastAndroid } from 'react-native';
+import {deleteObject, ref} from 'firebase/storage';
+import {Alert, Platform, ToastAndroid} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { launchImageLibrary } from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-
 
 export const updateUserName = (id, newUsername) => {
   firestore()
@@ -66,6 +65,7 @@ export const AboutMe = (id, about) => {
     });
 };
 
+
 const isGmail = email => {
   const gmailRegex = /^[a-zA-Z0-9]+@gmail\.com$/;
   return gmailRegex.test(email);
@@ -85,8 +85,6 @@ export const getProfileImage = (id, setCurrentImage) => {
       console.error('Error saving data: ', error);
     });
 };
-
-
 
 export const deletePhoto = async (userId, setCurrentImage) => {
   try {
@@ -114,7 +112,6 @@ export const deletePhoto = async (userId, setCurrentImage) => {
 
     setCurrentImage(null);
     ToastAndroid.show('Profile Image Deleted', ToastAndroid.SHORT);
-
   } catch (error) {
     console.error('Error deleting photo: ', error);
     Alert.alert('Error', 'Failed to delete image');
@@ -132,28 +129,30 @@ export const requestCameraPermission = async () => {
   return false;
 };
 
-export const openGallery = async (setCurrentImage,showTick,setImageUri)=>{
-  
-    try {
-      const result = await launchImageLibrary();
+export const openGallery = async (setCurrentImage, showTick, setImageUri) => {
+  try {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.2,
+    });
 
-      if (result.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (result.errorCode) {
-        console.log('ImagePicker Error: ', result.errorMessage);
-        Alert.alert('Error', result.errorMessage);
-      } else if (result.assets && result.assets.length > 0) {
-        console.log(result.assets);
-        const uri = result.assets[0].uri;
-        if (uri) {
-          console.log(uri);
-          setCurrentImage(uri);
-          setImageUri(uri);
-          showTick(true);
-        }
+    if (result.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (result.errorCode) {
+      console.log('ImagePicker Error: ', result.errorMessage);
+      Alert.alert('Error', result.errorMessage);
+    } else if (result.assets && result.assets.length > 0) {
+      console.log(result.assets);
+      const uri = result.assets[0].uri;
+      if (uri) {
+        console.log(uri);
+        setCurrentImage(uri);
+        setImageUri(uri);
+        showTick(true);
       }
-    } catch (error) {
-      console.log('Error launching camera: ', error);
-      Alert.alert('Error', 'Failed to launch gallery');
     }
-}
+  } catch (error) {
+    console.log('Error launching camera: ', error);
+    Alert.alert('Error', 'Failed to launch gallery');
+  }
+};

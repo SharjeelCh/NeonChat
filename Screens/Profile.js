@@ -28,6 +28,7 @@ import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {
   AboutMe,
   deletePhoto,
+  getAboutMe,
   openGallery,
   requestCameraPermission,
   updateEmailName,
@@ -47,7 +48,7 @@ const Profile = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [tempname, setTempname] = useState('');
   const [tempemail, setTempemail] = useState('');
-  const [tempabout, setTempabout] = useState('i am availible');
+  const [tempabout, setTempabout] = useState();
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [isAboutFocused, setIsAboutFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -178,7 +179,7 @@ const Profile = () => {
           showTick(false);
           ToastAndroid.show('Profile Image Updated', ToastAndroid.SHORT);
           getProfileImage();
-          setLoading(false)
+          setLoading(false);
         })
         .catch(error => {
           console.error('Error saving data: ', error);
@@ -197,6 +198,9 @@ const Profile = () => {
           setCurrentImage(doc.data().profileImage);
           setUsername(doc.data().username);
           setEmail(doc.data().email);
+          setTempabout(doc.data().aboutme);
+          if (doc.data().aboutme) setTempabout(doc.data().aboutme);
+          else setTempabout('Hy there');
         });
       })
       .catch(error => {
