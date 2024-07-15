@@ -24,32 +24,36 @@ const Login = () => {
   const navigation = useNavigation();
   const [email, setemail] = useState('');
   const [password, setpassword] = useState('');
-
+  const [loading, setLoading] = useState(false);
   const handlelogin = () => {
+    setLoading(true);
     firestore()
       .collection('users')
       .where('email', '==', email)
       .get()
       .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          const userData = doc.data();
-          if (userData.password === password) {
-            asyncdata(
-              querySnapshot.docs[0].data().username,
-              querySnapshot.docs[0].data().email,
-              querySnapshot.docs[0].data().userId,
-            );
-            console.log('Login successful:', userData);
-            navigation.navigate('Tabbar');
-          } else {
-            console.log('Incorrect password');
+        if (querySnapshot.empty) {
+          Alert.alert('Error', 'Email not found', [{text: 'OK'}]);
+        } else {
+          let userFound = false;
+          querySnapshot.forEach(doc => {
+            const userData = doc.data();
+            if (userData.password === password) {
+              userFound = true;
+              asyncdata(userData.username, userData.email, userData.userId);
+              navigation.navigate('Tabbar');
+            }
+          });
+
+          if (!userFound) {
+            Alert.alert('Error', 'Incorrect password', [{text: 'OK'}]);
           }
-        });
+        }
       })
       .catch(error => {
-        console.log(error);
-        Alert.alert('error', 'Error logging in', 'ok');
-      });
+        Alert.alert('Error', 'Error logging in', [{text: 'OK'}]);
+      })
+      .finally(() => setLoading(false));
 
     const asyncdata = async (name, email, userId) => {
       await AsyncStorage.setItem('NAME', name);
@@ -57,6 +61,12 @@ const Login = () => {
       await AsyncStorage.setItem('USERID', userId);
       await AsyncStorage.setItem('isloggedin', JSON.stringify(true));
     };
+  };
+
+  const validate = () => {
+    let valid = true;
+    if (email == '' || password == '') valid = false;
+    return valid;
   };
   return (
     <View style={{flex: 1}}>
@@ -210,9 +220,11 @@ const Login = () => {
 
       <StartButton
         background="#07635D"
+        loading={loading}
         text="Login"
         onpress={() => {
-          handlelogin();
+          if (validate()) handlelogin();
+          else Alert.alert('Please enter correct data');
         }}
       />
       <View

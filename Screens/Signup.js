@@ -24,7 +24,9 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPass, setrepeat] = useState('');
+  const [loading, setLoading] = useState(false);
   const handleRegister = () => {
+    setLoading(true);
     const userId = uuid.v4();
     const lowercasedUsername = username.toLowerCase();
 
@@ -40,17 +42,18 @@ const Signup = () => {
       })
       .then(res => {
         console.log('data: ', res);
-        navigation.navigate('Login')
+        navigation.navigate('Login');
       })
       .catch(error => {
-        console.log('error');
-      });
+        console.log(error);
+      })
+      .finally(() => setLoading(false));
   };
   const validate = () => {
     let valid = true;
     if (username == '' || email == '' || password == '') valid = false;
     if (password !== repeatPass) valid = false;
-   return valid
+    return valid;
   };
   return (
     <View style={{flex: 1, backgroundColor: '#07635D'}}>
@@ -246,11 +249,10 @@ const Signup = () => {
       <StartButton
         text="Sign Up"
         background="#FF7A30"
+        loading={loading}
         onpress={() => {
-          if(validate())
-          handleRegister();
-        else
-        Alert.alert("Please enter correct data")
+          if (validate()) handleRegister();
+          else Alert.alert('Please enter correct data');
         }}
       />
       <View
@@ -275,7 +277,6 @@ const Signup = () => {
           alignItems: 'center',
           width: width,
           height: height / 10,
-          // marginTop: height / 100,
           justifyContent: 'space-evenly',
         }}>
         <TouchableOpacity

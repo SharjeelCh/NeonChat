@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import Ioni from 'react-native-vector-icons/Ionicons';
 
-const Simpleheader = (props) => {
+const Simpleheader = props => {
   const navigation = useNavigation();
 
   return (
@@ -16,12 +16,15 @@ const Simpleheader = (props) => {
         position: 'relative',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft:width/46,
+        paddingLeft: width / 46,
       }}>
       <TouchableOpacity
-        style={{marginHorizontal: width / 25,width:width/10}}
+        style={{marginHorizontal: width / 25, width: width / 10}}
         onPress={() => {
-          navigation.replace('Tabbar');
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Tabbar'}],
+          });
         }}>
         <Icon name="chevron-left" size={width / 16} color="black" />
       </TouchableOpacity>
